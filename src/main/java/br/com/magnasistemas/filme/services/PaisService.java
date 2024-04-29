@@ -29,6 +29,8 @@ public class PaisService {
 		this.paisRepository = paisRepository;
 	}
 	
+	
+	
 	public List<PaisRetornoDto> listarPaises(){
 		log.info("Buscando todos os registros de paises");
 		var paises = paisRepository.findAll();
@@ -45,15 +47,14 @@ public class PaisService {
 	
 	public PaisRetornoDto getPaisById(Long id) {
 		log.info("Buscando registro do país de ID: {}", id);
-		
 		Optional<PaisModel> paisOptional = paisRepository.findById(id);
 		
 		if(paisOptional.isPresent()) {
 			PaisModel paisModel = paisOptional.get();
-			log.info("País com ID {} encontrado com sucesso", id);
+			log.info("País com ID {}, encontrado com sucesso!", id);
 			return new PaisRetornoDto(paisModel);
 		}
-		log.warn("não foi possivel encontrar o país com o id: {}", id);
+		log.warn("Não foi possivel encontrar o país com o ID: {}", id);
 		throw new ValidacaoException("não foi possivel encontrar o país com o ID indicado");
 	}
 	
@@ -68,23 +69,8 @@ public class PaisService {
 		return new PaisRetornoDto(pais);
 	}
 	
-	public void deletaPais(Long id) {
-		log.info("Iniciando a exclusão do pais de ID: {}", id);
-		Optional<PaisModel> paisOptional = paisRepository.findById(id);
-		
-		if(paisOptional.isPresent()) {
-			paisRepository.deleteById(id);
-			log.info("Pais de ID {}, foi deletado com sucesso", id);
-		}else {
-			log.warn("Pais de ID {} não foi encontrado", id);
-			throw new ValidacaoException("Pais do id indicado não foi encontrado");
-		}
-		
-	}
-	
 	public PaisRetornoDto putPais(PaisCadastroDto dados, Long id) {
 		log.info("Iniciando a atualização de dados do país de ID: {}", id);
-		
 		Optional<PaisModel> paisOptional = paisRepository.findById(id);
 
 		if(paisOptional.isPresent()) {
@@ -92,16 +78,28 @@ public class PaisService {
 			pais.atualizaPais(dados);
 			paisRepository.save(pais);
 			
-			log.info("Dados do país {} atualizados", id);
+			log.info("Dados do país de ID: {}, atualizados com sucesso!", id);
 			return new PaisRetornoDto(pais);
 		}
 		
-		log.info("Pais com ID: {}, não foi encontrado", id);
+		log.warn("Pais com ID: {}, não foi encontrado", id);
 		throw new ValidacaoException("Pais do id indicado não foi encontrado");
 
 		
 		
 	}
-	
 
+	public void deletaPais(Long id) {
+		log.info("Iniciando a exclusão do pais de ID: {}", id);
+		Optional<PaisModel> paisOptional = paisRepository.findById(id);
+		
+		if(paisOptional.isPresent()) {
+			paisRepository.deleteById(id);
+			log.info("Pais de ID {}, foi deletado com sucesso!", id);
+		}else {
+			log.warn("Pais de ID {} não foi encontrado", id);
+			throw new ValidacaoException("Pais do id indicado não foi encontrado");
+		}
+		
+	}
 }

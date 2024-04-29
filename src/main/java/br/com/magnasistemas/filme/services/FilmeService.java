@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import br.com.magnasistemas.filme.dtos.AtorFilmeDto;
@@ -24,10 +26,13 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class FilmeService {
 	
+	private static final Logger log = LoggerFactory.getLogger(FilmeService.class);
+	
 	private final FilmeRepository filmeRepository;
 	private final DiretorRepository diretorRepository;
 	private final ProdutoraRepository produtoraRepository;
 	private final AtorRepository atorRepository;
+	
 	
 	
 	public FilmeService(FilmeRepository filmeRepository, DiretorRepository diretorRepository,
@@ -38,8 +43,10 @@ public class FilmeService {
 		this.atorRepository = atorRepository;
 	}
 
+	
+	
 	public List<FilmeRetornoDto> listarFilmes(){
-		
+		log.info("Buscando todos os registros de filmes");
 		var filmes = filmeRepository.findAll();
 		List<FilmeRetornoDto> dtos= new ArrayList<>();
 		
@@ -48,23 +55,26 @@ public class FilmeService {
 			dtos.add(dto);
 		}
 		
+		log.info("Encontrados {} filmes", dtos.size());
 		return dtos;
 	}
 	
 	public FilmeRetornoDto getFilmeById(Long id) {
-		
+		log.info("Buscando registro do filme de ID: {}", id);
 		Optional<FilmeModel> filmeOptional = filmeRepository.findById(id);
 		
 		if(filmeOptional.isPresent()) {
 			FilmeModel filmeModel = filmeOptional.get();
+			log.info("Filme de ID: {}, encontrado com sucesso!", id);
 			return new FilmeRetornoDto(filmeModel);
 		}
 		
+		log.warn("Não foi possivel encontrar o filme com o ID: {}", id);
 		throw new ValidacaoException("Não foi possivel encontrar o filme com o ID indicado");
 	}
 	
 	public FilmeRetornoDto cadastrarFilme(FilmeCadastroDto dados) {
-	
+		log.info("Cadastrando novo filme");
 		Optional<DiretorModel> diretorOptional = diretorRepository.findById(dados.getDiretorId());
 		
 		if(diretorOptional.isPresent()) {
@@ -80,15 +90,19 @@ public class FilmeService {
 				filme.setProdutora(produtora);
 				filmeRepository.save(filme);
 				
+				log.info("Novo filme cadastrado com sucesso!");
 				return new FilmeRetornoDto(filme);
 			}
+			
+			log.warn("Não foi possivel encontrar a produtora com o ID: {}", dados.getProdutoraId());
 			throw new ValidacaoException("Não foi possível encontrar a produtora com o ID indicado");
 		}
+		log.warn("Não foi possivel encontrar o diretor com o ID: {}", dados.getDiretorId());
 		throw new ValidacaoException("Não foi possível encontrar o diretor com o ID indicado");
 	}
 	
 	public FilmeRetornoDto putFilme(FilmeCadastroDto dados, Long id) {
-		
+		log.info("Iniciando a atualização de dados do filme de ID: {}", id);
 		Optional<FilmeModel> filmeOptional = filmeRepository.findById(id);
 		
 		if(filmeOptional.isPresent()) {
@@ -104,20 +118,26 @@ public class FilmeService {
 					filme.atualizaFilme(dados);
 					filme.setDiretor(diretor);
 					filme.setProdutora(produtora);
-					
 					filmeRepository.save(filme);
+
+					log.info("Dados do filme de ID: {}, atualizados com sucesso!", id);
 					return new FilmeRetornoDto(filme);
 				}
 				
+				log.warn("Não foi possivel encontrar a produtora com o ID: {}", dados.getProdutoraId());
 				throw new ValidacaoException("Não foi possível encontrar a produtora com o ID indicado");
 			}
+			
+			log.warn("Não foi possivel encontrar o diretor com o ID: {}", dados.getDiretorId());
 			throw new ValidacaoException("Não foi possivel encontrar o diretor com o ID indicado");
 		}
+		
+		log.warn("Não foi possivel encontrar o filme com o ID: {}", id);
 		throw new ValidacaoException("Não foi possivel encontrar o filme com o ID indicado");
 	}
 	
 	public FilmeRetornoDto adicionarAtor(AtorFilmeDto dados) {
-		
+		log.info("Adicionando ator de ID: {}, no filme de ID: {}", dados.getIdAtor(), dados.getIdFilme());
 		Optional<FilmeModel> filmeOptional = filmeRepository.findById(dados.getIdFilme());
 		
 		if(filmeOptional.isPresent()) {
@@ -134,50 +154,34 @@ public class FilmeService {
 				filme.setAtores(atores);
 				filmeRepository.save(filme);
 				
+				log.info("Ator adicionado ao filme com sucesso!");
 				return new FilmeRetornoDto(filme); 
 			}else {
+				
+				log.warn("Não foi possivel encontrar o ator/atriz com o ID: {}", dados.getIdAtor());
 				throw new ValidacaoException("Não foi possível encontrar o ator com o ID indicado");
 			}
 			
 		}else {
+			
+			log.warn("Não foi possivel encontrar o filme com o ID: {}", dados.getIdFilme());
 			throw new ValidacaoException("Não foi possível encontrar o filme com o ID indicado");
 		}
 	}
 	
 	public void deletaFilme(Long id) {
-		
+		log.info("Iniciando a exclusão do filme de ID: {}", id);
 		Optional<FilmeModel> filmeOptional = filmeRepository.findById(id);
 		
 		if(filmeOptional.isPresent()) {
 			filmeRepository.deleteById(id);
+			log.info("Filme de ID {}, foi deletado com sucesso!", id);
 		}else {
+			
+			log.warn("Filme de ID {} não foi encontrado", id);
 			throw new ValidacaoException("Não foi possível encontrar o filme com o ID indicado");			
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }
