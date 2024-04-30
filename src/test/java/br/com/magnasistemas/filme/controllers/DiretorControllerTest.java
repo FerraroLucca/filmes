@@ -54,7 +54,7 @@ public class DiretorControllerTest {
 	private DiretorRepository diretorRepository;
 
 	@BeforeEach
-	public void inicializar() {
+	public void inicializar() { 
 		criarPais();
 		criarDiretor();
 	}

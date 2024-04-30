@@ -189,8 +189,8 @@ public class ProdutoraControllerTest {
 		public void testListarUmaProdutoraComIdValido() {
 			criarPais();
 			criarProdutora();
-			ResponseEntity<ProdutoraRetornoDto> response = restTemplate
-					.getForEntity("http://localhost:" + randomServerPort + "/produtora/1", ProdutoraRetornoDto.class);
+			ResponseEntity<String> response = restTemplate
+					.getForEntity("http://localhost:" + randomServerPort + "/produtora/1", String.class);
 
 			HttpStatusCode statusCode = response.getStatusCode();
 			Assert.assertEquals(HttpStatus.OK, statusCode);

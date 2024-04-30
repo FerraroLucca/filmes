@@ -65,7 +65,7 @@ public class PaisControllerTest {
 		PaisCadastroDto pais = new PaisCadastroDto("Brasil", "Brasília", "América", "Português");
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON); 
 		
 		HttpEntity<PaisCadastroDto> request = new HttpEntity<>(pais, headers);
 		
