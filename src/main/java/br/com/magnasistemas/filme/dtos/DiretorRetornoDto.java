@@ -2,8 +2,6 @@ package br.com.magnasistemas.filme.dtos;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import br.com.magnasistemas.filme.models.DiretorModel;
 import br.com.magnasistemas.filme.models.PaisModel;
 
@@ -13,7 +11,6 @@ public class DiretorRetornoDto {
 	
 	private String nome;
 	
-	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate data;
 	
 	private String genero;
