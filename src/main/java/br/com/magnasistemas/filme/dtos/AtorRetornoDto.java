@@ -14,7 +14,6 @@ public class AtorRetornoDto {
 	
 	private String nome;
 	
-	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate nascimento;
 	
 	private String genero;
